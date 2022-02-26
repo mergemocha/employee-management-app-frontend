@@ -1,0 +1,33 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "node": true,
+    "jest": true,
+    "browser": true
+  },
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "project": "./tsconfig.json",
+    "createDefaultProgram": true, // Required for linting to work even on the test folder
+    "ecmaFeatures": {
+      "globalReturn": true,
+      "jsx": true
+    },
+    "sourceType": "module"
+  },
+  "extends": [
+    "react-app",
+    "react-app/jest",
+    "standard-with-typescript",
+    "standard-jsx",
+    "standard-react"
+  ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "no-void": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/strict-boolean-expressions": "off"
+  }
+}
