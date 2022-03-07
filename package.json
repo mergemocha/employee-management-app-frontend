@@ -22,7 +22,7 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.29.2",
     "husky": "^7.0.4",
-    "lint-staged": "^12.3.4"
+    "lint-staged": "^12.3.5"
   },
   "dependencies": {
     "@emotion/react": "^11.8.1",
