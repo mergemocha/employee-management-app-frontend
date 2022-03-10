@@ -25,7 +25,6 @@ export default function Main (): JSX.Element {
   const [ctx, setCtx] = useAtom(ctxAtom)
 
   useEffect(() => {
-    console.log('run')
     void getEmployees()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setEmployees])
@@ -46,7 +45,7 @@ export default function Main (): JSX.Element {
           console.error('Error response undefined:', err)
         }
       } else {
-        console.error(`Non-axios error: ${err}`)
+        console.error('Non-axios error:', err)
       }
     }
   }
@@ -54,10 +53,6 @@ export default function Main (): JSX.Element {
   const openEditor = (action: UserEditorCtx['action'], employee?: Employee): void => {
     setCtx({ action, open: true, employee })
   }
-
-  useEffect(() => {
-    void getEmployees()
-  })
 
   const deleteEmployee = async (id: string): Promise<void> => {
     try {
@@ -75,7 +70,7 @@ export default function Main (): JSX.Element {
           console.error('Error response undefined:', err)
         }
       } else {
-        console.error(`Non-axios error: ${err}`)
+        console.error('Non-axios error:', err)
       }
     }
   }
