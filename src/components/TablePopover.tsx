@@ -4,6 +4,7 @@ import { Employee } from './Employee'
 
 interface Props{
   employee: Employee
+  deleteEmployee: (id: string) => Promise<void>
 }
 
 export default function TablePopover (props: Props): JSX.Element {
@@ -17,10 +18,7 @@ export default function TablePopover (props: Props): JSX.Element {
     // add code here
     console.log(id)
   }
-  const handleRemove = (id: string): void => {
-    // add code here
-    console.log(id)
-  }
+
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
@@ -42,7 +40,7 @@ export default function TablePopover (props: Props): JSX.Element {
         }}
       >
         <Button onClick={() => handleEdit(props.employee.id)}>Edit</Button>
-        <Button onClick={() => handleRemove(props.employee.id)}>Remove</Button>
+        <Button onClick={async () => await props.deleteEmployee(props.employee.id)}>Remove</Button>
       </Popover>
     </>
   )

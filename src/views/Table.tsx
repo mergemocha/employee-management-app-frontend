@@ -22,7 +22,7 @@ export default function TabletoExport (): JSX.Element {
 
   useEffect(() => {
     void getEmployees()
-  }, [])
+  }, [setEmployees])
 
   const getEmployees = async (): Promise<void> => {
     try {
@@ -36,6 +36,26 @@ export default function TabletoExport (): JSX.Element {
       if (axios.isAxiosError(err)) {
         if (err.response !== undefined) {
           console.error(`Axios error: ${err.response.data}`)
+        } else {
+          console.error(`Error response undefined: ${err.response}`)
+        }
+      } else {
+        console.error(`Non-axios error: ${err}`)
+      }
+    }
+  }
+  const deleteEmployee = async (id: string): Promise<void> => {
+    try {
+      await axios.delete(`/employees/${id}`, {
+        headers: {
+          Authorization: token as string
+        }
+      })
+      await getEmployees()
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response !== undefined) {
+          console.error(`Axios error: ${err.response.data.message}`)
         } else {
           console.error(`Error response undefined: ${err.response}`)
         }
@@ -78,7 +98,7 @@ export default function TabletoExport (): JSX.Element {
                 <TableCell align='right'>{employee.secLevel}</TableCell>
                 <TableCell align='right'>{employee.permanent}</TableCell>
                 <TableCell align='right'>{employee.projects}</TableCell>
-                <TableCell align='right'><TablePopover employee={employee}/></TableCell>
+                <TableCell align='right'><TablePopover employee={employee} deleteEmployee={deleteEmployee}/></TableCell>
               </TableRow>
             ))}
           </TableBody>
