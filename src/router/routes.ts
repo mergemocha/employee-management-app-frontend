@@ -10,6 +10,11 @@ const routes: { [key: string]: Route } = {
   login: {
     path: '/login',
     component: lazy(async () => await import('../views/Login'))
+  },
+  table: {
+    path: '/table',
+    component: lazy(async () => await import('../views/Table')),
+    ignoreAuth: true
   }
 }
 
