@@ -1,17 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useAtom } from 'jotai'
-import { Control, Controller, FieldValues, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
 import DialogActions from '@mui/material/DialogActions'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import Grid from '@mui/material/Grid'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import tokenAtom from '../atoms/token'
 import ctxAtom from '../atoms/user-editor-ctx'
 import ControlledField from './ControlledField'
@@ -21,10 +17,10 @@ import { inputsReverse } from '../utils/inputs'
 export default function UserEditor (): JSX.Element {
   const [token] = useAtom(tokenAtom)
   const [ctx, setCtx] = useAtom(ctxAtom)
-  const [errorMessage, setErrorMessage] = useState('')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showErrorMessage, setShowErrorMessage] = useState(false)
 
-  const { handleSubmit, control, formState: { errors } } = useForm()
+  const { handleSubmit, control } = useForm()
 
   const handleClose = (): void => {
     setCtx({ action: ctx.action, open: false, employee: undefined })
