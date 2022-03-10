@@ -11,6 +11,7 @@ import TablePopover from '../components/TablePopover'
 import { Fab } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import '../assets/scss/Table.scss'
+import Navbar from '../components/Navbar'
 
 function createData (
   id: string,
@@ -36,6 +37,7 @@ const employees = [
 export default function TabletoExport (): JSX.Element {
   return (
     <div>
+      <Navbar/>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label='simple table'>
           <TableHead>
