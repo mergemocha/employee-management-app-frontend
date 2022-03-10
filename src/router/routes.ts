@@ -7,9 +7,17 @@ export interface Route {
 }
 
 const routes: { [key: string]: Route } = {
+  root: {
+    path: '/',
+    component: lazy(async () => await import('../views/Loading')) // FIXME: Temp
+  },
   login: {
     path: '/login',
     component: lazy(async () => await import('../views/Login'))
+  },
+  admin: {
+    path: '/admin',
+    component: lazy(async () => await import('../views/Admin'))
   }
 }
 

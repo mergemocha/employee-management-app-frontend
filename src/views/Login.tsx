@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
-import '../assets/scss/Login.scss'
+import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import Button from '@mui/material/Button'
 import axios from 'axios'
 import { useAtom } from 'jotai'
-import tokenAtom from '../atoms/token'
 import PasswordField from '../components/PasswordField'
 import UsernameField from '../components/UsernameField'
+import tokenAtom from '../atoms/token'
+import routes from '../router/routes'
+import '../assets/scss/Login.scss'
 
 export default function Login (): JSX.Element {
+  const navigate = useNavigate()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [token, setToken] = useAtom(tokenAtom)
   const [errorMessage, setErrorMessage] = useState('')
@@ -16,49 +19,30 @@ export default function Login (): JSX.Element {
   const { handleSubmit, control } = useForm()
 
   const onLoginSubmit = async (data: any): Promise<void> => {
-    await validateLogin(data.username, data.password)
+    await loginOrRegister({ register: false }, data.username, data.password)
   }
 
   const onRegisterSubmit = async (data: any): Promise<void> => {
-    await registerUser(data.username, data.password)
+    await loginOrRegister({ register: true }, data.username, data.password)
   }
 
-  const validateLogin = async (username: string, password: string): Promise<void> => {
+  const loginOrRegister = async (opts: { register: boolean }, username: string, password: string): Promise<void> => {
     try {
-      const res = await axios.post('/auth/login', { username, password })
+      const res = await axios.post(opts.register ? '/register/add-user' : '/auth/login', { username, password })
       setToken(res.data.token)
+      navigate(routes.root.path)
     } catch (err) {
       if (axios.isAxiosError(err)) {
         if (err.response !== undefined) {
-          if (err.response.data.message === 'Invalid username or password') {
-            setErrorMessage(err.response.data.message)
-            setShowErrorMessage(true)
-          }
+          setErrorMessage(err.response.data?.message)
+          setShowErrorMessage(true)
         } else {
-          console.error(`Error response undefined: ${err.response}`)
+          console.error('Error response undefined:', err)
+          setShowErrorMessage(true)
+          setErrorMessage(`Unknown error: ${err.message}`)
         }
       } else {
-        console.error(`Non-axios error: ${err}`)
-      }
-    }
-  }
-
-  const registerUser = async (username: string, password: string): Promise<void> => {
-    try {
-      const res = await axios.post('/register/add-user', { username, password })
-      setToken(res.data.token)
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        if (err.response !== undefined) {
-          if (err.response.data.message === 'Username already exists') {
-            setErrorMessage(err.response.data.message)
-            setShowErrorMessage(true)
-          }
-        } else {
-          console.error(`Error response undefined: ${err.response}`)
-        }
-      } else {
-        console.error(`Non-axios error: ${err}`)
+        console.error('Non-axios error:', err)
       }
     }
   }
