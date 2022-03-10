@@ -21,13 +21,43 @@ import '../assets/scss/Table.scss'
 export default function Main (): JSX.Element {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [token] = useAtom(tokenAtom)
+  const [showAdminFunctions, setShowAdminFunctions] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ctx, setCtx] = useAtom(ctxAtom)
+  useEffect(() => {
+    async function hasPermission (): Promise<void> {
+      await getPermission() ? setShowAdminFunctions(true) : setShowAdminFunctions(false)
+    }
+    void hasPermission()
+  })
 
   useEffect(() => {
     void getEmployees()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setEmployees])
+
+  const getPermission = async (): Promise<boolean> => {
+    return await axios.get('/permissions/check', {
+      headers: {
+        Authorization: token as string
+      }
+    })
+      .then(() => { return true })
+      .catch((err) => {
+        if (axios.isAxiosError(err)) {
+          if (err.response?.status !== 401) {
+            if (err.response !== undefined) {
+              console.error(`Axios error: ${err.response.data}`)
+            } else {
+              console.error('Error response undefined:', err)
+            }
+          }
+        } else {
+          console.error('Non-axios error:', err)
+        }
+        return false
+      })
+  }
 
   const getEmployees = async (): Promise<void> => {
     try {
@@ -89,7 +119,7 @@ export default function Main (): JSX.Element {
               <TableCell align='right'>Security Clearance Level</TableCell>
               <TableCell align='right'>Permanent</TableCell>
               <TableCell align='right'>Projects</TableCell>
-              <TableCell align='right'>Actions</TableCell>
+              {showAdminFunctions && <TableCell align='right'>Actions</TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -106,15 +136,16 @@ export default function Main (): JSX.Element {
                 <TableCell align='right'>{employee.department}</TableCell>
                 <TableCell align='right'>{employee.salary}</TableCell>
                 <TableCell align='right'>{employee.secLevel}</TableCell>
-                {employee.permanent ? <TableCell align='right'>Yes</TableCell> : <TableCell align='right'>No</TableCell>}
-                <TableCell align='right'>{employee.projects?.join(', ')}</TableCell>
-                <TableCell align='right'>
-                  <UserContextActions
-                    employee={employee}
-                    openEditor={openEditor}
-                    deleteEmployee={deleteEmployee}
-                  />
-                </TableCell>
+                <TableCell align='right'>{employee.permanent !== undefined ? employee.permanent ? 'Yes' : 'No' : undefined}</TableCell>
+                {showAdminFunctions && <TableCell align='right'>{employee.projects?.join(', ')}</TableCell>}
+                {showAdminFunctions &&
+                  <TableCell align='right'>
+                    <UserContextActions
+                      employee={employee}
+                      openEditor={openEditor}
+                      deleteEmployee={deleteEmployee}
+                    />
+                  </TableCell>}
               </TableRow>
             ))}
           </TableBody>
