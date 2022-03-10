@@ -1,10 +1,12 @@
 import React from 'react'
 import { Button, Popover } from '@mui/material'
-import { Employee } from './Employee'
+import { Employee } from '../types/api'
+import { UserEditorCtx } from '../atoms/user-editor-ctx'
 
-interface Props{
+interface Props {
   employee: Employee
   deleteEmployee: (id: string) => Promise<void>
+  openEditor: (action: UserEditorCtx['action'], employee?: Employee) => void
 }
 
 export default function TablePopover (props: Props): JSX.Element {
@@ -14,11 +16,6 @@ export default function TablePopover (props: Props): JSX.Element {
 
   const handleClose = (): void => {
     setAnchorEl(null)
-  }
-
-  const handleEdit = (id: string): void => {
-    // add code here
-    console.log(id)
   }
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -42,7 +39,7 @@ export default function TablePopover (props: Props): JSX.Element {
           horizontal: 'left'
         }}
       >
-        <Button onClick={() => handleEdit(props.employee.id)}>Edit</Button>
+        <Button onClick={() => props.openEditor('edit', props.employee)}>Edit</Button>
         <Button onClick={async () => await props.deleteEmployee(props.employee.id)}>Remove</Button>
       </Popover>
     </>

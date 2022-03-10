@@ -9,16 +9,11 @@ export interface Route {
 const routes: { [key: string]: Route } = {
   root: {
     path: '/',
-    component: lazy(async () => await import('../views/Loading')) // FIXME: Temp
+    component: lazy(async () => await import('../views/Main')) // FIXME: Temp
   },
   login: {
     path: '/login',
     component: lazy(async () => await import('../views/Login'))
-  },
-  table: {
-    path: '/table',
-    component: lazy(async () => await import('../views/Table')),
-    ignoreAuth: true
   },
   admin: {
     path: '/admin',

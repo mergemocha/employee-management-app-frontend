@@ -6,22 +6,28 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
-import { Employee } from '../components/Employee'
-import TablePopover from '../components/TablePopover'
 import { Fab } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import '../assets/scss/Table.scss'
-import Navbar from '../components/Navbar'
 import axios from 'axios'
 import { useAtom } from 'jotai'
+import Navbar from '../components/Navbar'
+import TablePopover from '../components/TablePopover'
+import { Employee } from '../types/api'
 import tokenAtom from '../atoms/token'
+import ctxAtom, { UserEditorCtx } from '../atoms/user-editor-ctx'
+import EmployeeEditor from '../components/EmployeeEditor'
+import '../assets/scss/Table.scss'
 
-export default function TabletoExport (): JSX.Element {
+export default function Main (): JSX.Element {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [token] = useAtom(tokenAtom)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [ctx, setCtx] = useAtom(ctxAtom)
 
   useEffect(() => {
+    console.log('run')
     void getEmployees()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setEmployees])
 
   const getEmployees = async (): Promise<void> => {
@@ -37,13 +43,22 @@ export default function TabletoExport (): JSX.Element {
         if (err.response !== undefined) {
           console.error(`Axios error: ${err.response.data}`)
         } else {
-          console.error(`Error response undefined: ${err.response}`)
+          console.error('Error response undefined:', err)
         }
       } else {
         console.error(`Non-axios error: ${err}`)
       }
     }
   }
+
+  const openEditor = (action: UserEditorCtx['action'], employee?: Employee): void => {
+    setCtx({ action, open: true, employee })
+  }
+
+  useEffect(() => {
+    void getEmployees()
+  })
+
   const deleteEmployee = async (id: string): Promise<void> => {
     try {
       await axios.delete(`/employees/${id}`, {
@@ -57,7 +72,7 @@ export default function TabletoExport (): JSX.Element {
         if (err.response !== undefined) {
           console.error(`Axios error: ${err.response.data.message}`)
         } else {
-          console.error(`Error response undefined: ${err.response}`)
+          console.error('Error response undefined:', err)
         }
       } else {
         console.error(`Non-axios error: ${err}`)
@@ -98,13 +113,21 @@ export default function TabletoExport (): JSX.Element {
                 <TableCell align='right'>{employee.secLevel}</TableCell>
                 <TableCell align='right'>{employee.permanent}</TableCell>
                 <TableCell align='right'>{employee.projects}</TableCell>
-                <TableCell align='right'><TablePopover employee={employee} deleteEmployee={deleteEmployee}/></TableCell>
+                <TableCell align='right'><TablePopover employee={employee} openEditor={openEditor} deleteEmployee={deleteEmployee}/></TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <Fab className='add-row-floating-action-button' aria-label='add' color='primary'><AddIcon/></Fab>
+      <Fab
+        className='add-row-floating-action-button'
+        aria-label='add'
+        color='primary'
+        onClick={() => openEditor('create')}
+      >
+        <AddIcon/>
+      </Fab>
+      <EmployeeEditor/>
     </div>
   )
 }
