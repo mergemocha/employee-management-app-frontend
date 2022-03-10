@@ -5,6 +5,11 @@ import { BrowserRouter } from 'react-router-dom'
 import './assets/scss/index.scss'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
+import config from './config.json'
+import axios from 'axios'
+
+axios.defaults.baseURL = `${config.SERVER_URL}`
+axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 ReactDOM.render(
   <React.StrictMode>

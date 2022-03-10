@@ -1,22 +1,24 @@
+import { useAtom } from 'jotai'
 import React, { useEffect } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import './assets/scss/App.scss'
+import tokenAtom from './atoms/token'
 import routes from './router/routes'
 import Loading from './views/Loading'
 
 function App (): JSX.Element {
   const navigate = useNavigate()
+  const [token] = useAtom(tokenAtom)
 
   useEffect(() => {
     const authlessPaths = Object.values(routes)
       .filter(route => route.ignoreAuth)
       .map(route => route.path)
 
-    // FIXME: Check global state instead
-    if (!authlessPaths.includes(window.location.pathname) && !localStorage.getItem('token')) {
+    if (!authlessPaths.includes(window.location.pathname) && !token) {
       navigate(routes.login.path)
     }
-  }, [navigate])
+  }, [navigate, token])
 
   function declareRoutes (): JSX.Element[] {
     const routeElements: JSX.Element[] = []
