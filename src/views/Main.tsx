@@ -11,7 +11,7 @@ import AddIcon from '@mui/icons-material/Add'
 import axios from 'axios'
 import { useAtom } from 'jotai'
 import Navbar from '../components/Navbar'
-import TablePopover from '../components/UserContextActions'
+import UserContextActions from '../components/UserContextActions'
 import { Employee } from '../types/api'
 import tokenAtom from '../atoms/token'
 import ctxAtom, { UserEditorCtx } from '../atoms/user-editor-ctx'
@@ -113,7 +113,13 @@ export default function Main (): JSX.Element {
                 <TableCell align='right'>{employee.secLevel}</TableCell>
                 <TableCell align='right'>{employee.permanent}</TableCell>
                 <TableCell align='right'>{employee.projects}</TableCell>
-                <TableCell align='right'><TablePopover employee={employee} openEditor={openEditor} deleteEmployee={deleteEmployee}/></TableCell>
+                <TableCell align='right'>
+                  <UserContextActions
+                    employee={employee}
+                    openEditor={openEditor}
+                    deleteEmployee={deleteEmployee}
+                  />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
