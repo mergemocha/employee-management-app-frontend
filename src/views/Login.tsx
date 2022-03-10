@@ -26,13 +26,7 @@ export default function Login (): JSX.Element {
   const validateLogin = async (username: string, password: string): Promise<void> => {
     try {
       const res = await axios.post('/auth/login', { username, password })
-
-      if (res.status === 200) {
-        if (res.data.token) {
-          setToken(res.data.token)
-        }
-        console.log(res.data.message)
-      }
+      setToken(res.data.token)
     } catch (err) {
       if (axios.isAxiosError(err)) {
         if (err.response !== undefined) {
@@ -40,7 +34,11 @@ export default function Login (): JSX.Element {
             setErrorMessage(err.response.data.message)
             setShowErrorMessage(true)
           }
+        } else {
+          console.error(`Error response undefined: ${err.response}`)
         }
+      } else {
+        console.error(`Non-axios error: ${err}`)
       }
     }
   }
@@ -48,11 +46,7 @@ export default function Login (): JSX.Element {
   const registerUser = async (username: string, password: string): Promise<void> => {
     try {
       const res = await axios.post('/register/add-user', { username, password })
-
-      if (res.status === 200) {
-        handleSubmit(onLoginSubmit)
-        console.log(res.data.message)
-      }
+      setToken(res.data.token)
     } catch (err) {
       if (axios.isAxiosError(err)) {
         if (err.response !== undefined) {
@@ -60,7 +54,11 @@ export default function Login (): JSX.Element {
             setErrorMessage(err.response.data.message)
             setShowErrorMessage(true)
           }
+        } else {
+          console.error(`Error response undefined: ${err.response}`)
         }
+      } else {
+        console.error(`Non-axios error: ${err}`)
       }
     }
   }

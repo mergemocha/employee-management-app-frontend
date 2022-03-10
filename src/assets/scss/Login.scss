@@ -1,41 +1,43 @@
 .login-container {
-    height: inherit;
-    width: inherit;
+  height: inherit;
+  width: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  .login-box {
+    display: flex;
+    flex-direction: column;
+    padding: 3em;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+      rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  }
+
+  .login-textfield-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .login-textfield {
+    margin: 0.5em;
+    width: fit-content;
+  }
+
+  .error-message {
+    margin-bottom: 2em;
+    font-size: small;
+    color: red;
+  }
+
+  .login-button-container {
     display: flex;
     justify-content: center;
-    align-items: center;
-    text-align: center;
+    margin: 1em;
+  }
 
-    .login-box {
-        display: flex;
-        flex-direction: column;
-        padding: 3em;
-        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-    }
-    
-    .login-textfield-container {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .login-textfield {
-        margin: 0.5em;
-        width:fit-content;
-    }
-    
-    .error-message {
-        margin: 0 0 2em 0;
-        font-size: small;
-        color: red;
-    }
-
-    .login-button-container {
-        display: flex;
-        justify-content: center;
-        margin: 1em;
-    }
-
-    .login-button, .register-button {
-        margin: 0.5em;
-    }
+  .login-button,
+  .register-button {
+    margin: 0.5em;
+  }
 }
