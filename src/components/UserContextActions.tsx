@@ -9,7 +9,7 @@ interface Props {
   openEditor: (action: UserEditorCtx['action'], employee?: Employee) => void
 }
 
-export default function TablePopover (props: Props): JSX.Element {
+export default function UserContextActions (props: Props): JSX.Element {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorEl(event.currentTarget)
   }
