@@ -86,7 +86,7 @@ export default function Main (): JSX.Element {
               <TableCell align='right'>Title</TableCell>
               <TableCell align='right'>Department</TableCell>
               <TableCell align='right'>Salary</TableCell>
-              <TableCell align='right'>Security clearancelevel</TableCell>
+              <TableCell align='right'>Security Clearance Level</TableCell>
               <TableCell align='right'>Permanent</TableCell>
               <TableCell align='right'>Projects</TableCell>
               <TableCell align='right'>Actions</TableCell>
@@ -106,8 +106,8 @@ export default function Main (): JSX.Element {
                 <TableCell align='right'>{employee.department}</TableCell>
                 <TableCell align='right'>{employee.salary}</TableCell>
                 <TableCell align='right'>{employee.secLevel}</TableCell>
-                <TableCell align='right'>{employee.permanent}</TableCell>
-                <TableCell align='right'>{employee.projects}</TableCell>
+                {employee.permanent ? <TableCell align='right'>Yes</TableCell> : <TableCell align='right'>No</TableCell>}
+                <TableCell align='right'>{employee.projects?.join(', ')}</TableCell>
                 <TableCell align='right'>
                   <UserContextActions
                     employee={employee}
