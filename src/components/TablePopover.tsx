@@ -11,9 +11,11 @@ export default function TablePopover (props: Props): JSX.Element {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorEl(event.currentTarget)
   }
+
   const handleClose = (): void => {
     setAnchorEl(null)
   }
+
   const handleEdit = (id: string): void => {
     // add code here
     console.log(id)
@@ -22,6 +24,7 @@ export default function TablePopover (props: Props): JSX.Element {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
+
   return (
     <>
       <Button
