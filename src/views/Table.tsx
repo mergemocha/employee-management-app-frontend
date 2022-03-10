@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -12,29 +12,62 @@ import { Fab } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import '../assets/scss/Table.scss'
 import Navbar from '../components/Navbar'
+import axios from 'axios'
+import { useAtom } from 'jotai'
+import tokenAtom from '../atoms/token'
 
-function createData (
-  id: string,
-  firstName: string,
-  lastName: string,
-  title: string,
-  department: string,
-  salary: number,
-  secLevel: number,
-  permanent: boolean,
-  projects: string[]
-): Employee {
-  return { id, firstName, lastName, title, department, salary, secLevel, permanent, projects }
-}
-
-// todo remove these
+/*
 const employees = [
   createData('1', 'name', '2nd name', 'dude', 'basement', 1, 2, true, ['app']),
   createData('2', 'basement', 'goblin', 'Goblin', 'basement', 1, 2, true, ['app']),
   createData('3', 'basement', 'goblin2', 'Goblin', 'basement', 1, 2, true, ['app'])
 ]
+*/
 
 export default function TabletoExport (): JSX.Element {
+  const [employees, setEmployees] = useState<Employee[]>([])
+  const [token] = useAtom(tokenAtom)
+
+  /*
+  function createData (
+    id: string,
+    firstName: string,
+    lastName: string,
+    title: string,
+    department: string,
+    salary: number,
+    secLevel: number,
+    permanent: boolean,
+    projects: string[]
+  ): Employee {
+    return { id, firstName, lastName, title, department, salary, secLevel, permanent, projects }
+  }
+  */
+
+  useEffect(() => {
+    void getEmployees()
+  }, [])
+
+  const getEmployees = async (): Promise<void> => {
+    try {
+      const res = await axios.get('/employees/', {
+        headers: {
+          Authorization: token as string
+        }
+      })
+      setEmployees(res.data)
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response !== undefined) {
+          console.error(`Axios error: ${err.response.data}`)
+        } else {
+          console.error(`Error response undefined: ${err.response}`)
+        }
+      } else {
+        console.error(`Non-axios error: ${err}`)
+      }
+    }
+  }
   return (
     <div>
       <Navbar/>
