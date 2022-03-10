@@ -2,41 +2,84 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useAtom } from 'jotai'
+import { Control, Controller, FieldValues, useForm } from 'react-hook-form'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogActions from '@mui/material/DialogActions'
 import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import Grid from '@mui/material/Grid'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import tokenAtom from '../atoms/token'
 import ctxAtom from '../atoms/user-editor-ctx'
+import ControlledField from './ControlledField'
+import { ReactHookFormRules } from '../types/react-hook-form'
+import { inputsReverse } from '../utils/inputs'
 
 export default function UserEditor (): JSX.Element {
   const [token] = useAtom(tokenAtom)
   const [ctx, setCtx] = useAtom(ctxAtom)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
+
+  const { handleSubmit, control, formState: { errors } } = useForm()
 
   const handleClose = (): void => {
-    setCtx({ action: ctx.action, open: false })
+    setCtx({ action: ctx.action, open: false, employee: undefined })
   }
+
+  const mapValuesReverse = (data: { [key: string]: any }): { [key: string]: any } => {
+    const values: { [key: string]: any } = {}
+
+    for (const key in data) {
+      const name = inputsReverse[key]
+      values[name] = data[key]
+    }
+
+    return values
+  }
+
+  const handleSave = async (data: any): Promise<void> => {
+    await axios.post('/employees', { ...mapValuesReverse(data), permanent: true, projects: [] }, {
+      headers: { Authorization: token as string }
+    })
+  }
+
+  const createInput = (name: string, defaultValue?: string, rules?: ReactHookFormRules): JSX.Element => (
+    <Grid item>
+      <ControlledField
+        name={name}
+        defaultValue={defaultValue}
+        control={control}
+        handleHideMessages={() => setShowErrorMessage(false)}
+        rules={rules}
+      />
+    </Grid>
+  )
 
   return (
     <Dialog
       open={ctx.open}
       onClose={handleClose}
-      aria-labelledby='alert-dialog-title'
-      aria-describedby='alert-dialog-description'
     >
-      <DialogTitle id='alert-dialog-title'>
-        {ctx.action === 'create' ? 'Create new employee' : `Editing employee ${ctx.employee?.firstName} ${ctx.employee?.lastName}`}
+      <DialogTitle>
+        {ctx.action === 'create' ? 'Create new employee' : `Editing employee "${ctx.employee?.firstName} ${ctx.employee?.lastName}"`}
       </DialogTitle>
       <DialogContent>
-        <DialogContentText id='alert-dialog-description'>
-          Test
-        </DialogContentText>
+        <Grid container sx={{ margin: 2 }}>
+          {createInput('First name', ctx.employee?.firstName)}
+          {createInput('Last name', ctx.employee?.lastName)}
+          {createInput('Title', ctx.employee?.title)}
+          {createInput('Department', ctx.employee?.department)}
+          {createInput('Salary', ctx.employee?.salary ? ctx.employee.salary.toString() : undefined, { required: 'Field must be a number', pattern: /^[0-9]+$/ })}
+          {createInput('Security clearance level', ctx.employee?.secLevel ? ctx.employee.secLevel.toString() : undefined, { required: 'Field must be a number', pattern: /^[0-9]+$/ })}
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleClose} autoFocus>Save</Button>
+        <Button onClick={handleSubmit(handleSave)} autoFocus>Save</Button>
       </DialogActions>
     </Dialog>
   )
