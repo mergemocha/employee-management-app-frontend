@@ -27,7 +27,7 @@ export default function Admin (): JSX.Element {
 
   return (
     <div className='admin'>
-      <Navbar/>
+      <Navbar isAdmin isMain={false}/>
       <Grid container sx={{ margin: 2 }}>
         {
           users.length === 0
