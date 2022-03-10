@@ -1,13 +1,73 @@
-import React from 'react'
+import React, { useState } from 'react'
 import '../assets/scss/Login.scss'
-import { Controller, useForm } from 'react-hook-form'
-import TextField from '@mui/material/TextField'
+import { useForm } from 'react-hook-form'
 import Button from '@mui/material/Button'
+import axios from 'axios'
+import { useAtom } from 'jotai'
+import tokenAtom from '../atoms/token'
+import PasswordField from '../components/PasswordField'
+import UsernameField from '../components/UsernameField'
 
 export default function Login (): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [token, setToken] = useAtom(tokenAtom)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
   const { handleSubmit, control } = useForm()
-  // TODO: connect onSubmit to login endpoint
-  const onSubmit = (data: any): void => console.log(data)
+
+  const onLoginSubmit = async (data: any): Promise<void> => {
+    await validateLogin(data.username, data.password)
+  }
+
+  const onRegisterSubmit = async (data: any): Promise<void> => {
+    await registerUser(data.username, data.password)
+  }
+
+  const validateLogin = async (username: string, password: string): Promise<void> => {
+    try {
+      const res = await axios.post('/auth/login', { username, password })
+
+      if (res.status === 200) {
+        if (res.data.token) {
+          setToken(res.data.token)
+        }
+        console.log(res.data.message)
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response !== undefined) {
+          if (err.response.data.message === 'Invalid username or password') {
+            setErrorMessage(err.response.data.message)
+            setShowErrorMessage(true)
+          }
+        }
+      }
+    }
+  }
+
+  const registerUser = async (username: string, password: string): Promise<void> => {
+    try {
+      const res = await axios.post('/register/add-user', { username, password })
+
+      if (res.status === 200) {
+        handleSubmit(onLoginSubmit)
+        console.log(res.data.message)
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response !== undefined) {
+          if (err.response.data.message === 'Username already exists') {
+            setErrorMessage(err.response.data.message)
+            setShowErrorMessage(true)
+          }
+        }
+      }
+    }
+  }
+
+  const handleHideMessages = (): void => {
+    setShowErrorMessage(false)
+  }
 
   return (
     <div className='login-container'>
@@ -15,43 +75,23 @@ export default function Login (): JSX.Element {
         <h1>Title</h1>
         <form>
           <div className='login-textfield-container'>
-            <Controller
-              name='username-field'
-              control={control}
-              rules={{ required: 'Username required' }}
-              render={({ field: { onChange, value }, fieldState: { error } }) => (
-                <TextField
-                  className='username-field'
-                  onChange={onChange}
-                  value={value}
-                  label='Username'
-                  error={!!error}
-                  helperText={error ? error.message : null}
-                />
-              )}
-            />
-          </div>
-          <div className='login-textfield-container'>
-            <Controller
-              name='password-field'
-              control={control}
-              rules={{ required: 'Password required' }}
-              render={({ field: { onChange, value }, fieldState: { error } }) => (
-                <TextField
-                  className='password-field'
-                  onChange={onChange}
-                  value={value}
-                  label='Password'
-                  error={!!error}
-                  helperText={error ? error.message : null}
-                />
-              )}
-            />
+            <div className='login-textfield'>
+              <UsernameField formControl={control} handleHideMessages={handleHideMessages}/>
+            </div>
+            <div className='login-textfield'>
+              <PasswordField formControl={control} handleHideMessages={handleHideMessages}/>
+            </div>
           </div>
           <div className='login-button-container'>
-            <Button className='login-button' variant='contained' onClick={handleSubmit(onSubmit)}>Login</Button>
+            <div className='register-button'>
+              <Button color='secondary' variant='contained' onClick={handleSubmit(onRegisterSubmit)}>Register</Button>
+            </div>
+            <div className='login-button'>
+              <Button variant='contained' onClick={handleSubmit(onLoginSubmit)}>Login</Button>
+            </div>
           </div>
         </form>
+        {showErrorMessage && <p className='error-message'>{errorMessage}</p>}
       </div>
     </div>
   )

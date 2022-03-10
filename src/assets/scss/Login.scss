@@ -1,25 +1,41 @@
 .login-container {
-    height: 100vh;
-    width: 100vw;
+    height: inherit;
+    width: inherit;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-}
 
-.login-box {
-    width: 22em;
-    height: 23em;
-    display: flex;
-    flex-direction: column;
-    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-}
+    .login-box {
+        display: flex;
+        flex-direction: column;
+        padding: 3em;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    }
+    
+    .login-textfield-container {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .login-textfield {
+        margin: 0.5em;
+        width:fit-content;
+    }
+    
+    .error-message {
+        margin: 0 0 2em 0;
+        font-size: small;
+        color: red;
+    }
 
-.login-textfield-container {
-    margin: 0.5em 1em 0.5em 1em;
-}
+    .login-button-container {
+        display: flex;
+        justify-content: center;
+        margin: 1em;
+    }
 
-.login-button-container {
-    margin: 1em 1em 1em 1em;
+    .login-button, .register-button {
+        margin: 0.5em;
+    }
 }
-
